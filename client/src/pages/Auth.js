@@ -1,13 +1,34 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import {Button, Container, Form, FormControl} from 'react-bootstrap';
 import { NavLink, useLocation } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import { LOGIN_ROUTE, REGISTRATION_ROUTE } from '../utils/consts';
+import { login, registration } from '../http/userApi';
+import { observer } from 'mobx-react-lite';
+import { Context } from '..';
 
-const Auth = () => {
+const Auth = observer(() => {
+  const {user} = useContext(Context)
   const location = useLocation()
   const isLogin = location.pathname === LOGIN_ROUTE
-  console.log(location)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const click = async () => {
+    try {
+      let data;
+      if (isLogin) {
+        data = await login(email, password)
+      } else {
+        data = await registration(email, password)
+      }
+      user.setUser(user)
+      user.setIsAuth(true)
+    } catch (e) {
+
+    }
+  }
+
   return (
     <Container 
     className='d-flex justify-content-center align-items-center'
@@ -19,10 +40,15 @@ const Auth = () => {
           <FormControl 
             className='mt-3'
             placeholder='Введите ваш email...'
+            value={email}
+            onChange={e => setEmail(e.target.value)}
           />
           <FormControl 
             className='mt-3'
             placeholder='Введите ваш пароль...'
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            type="password"
           />
           <div style={{display:'flex', 'justify-content':'space-between', 'margin-top': '10px'}}>
             {isLogin ? 
@@ -37,6 +63,7 @@ const Auth = () => {
             <Button
               className='align-self-end' 
               variant={'outline-success'}
+              onClick={click}
             >
               {isLogin ? 
               'Войти'
@@ -49,6 +76,6 @@ const Auth = () => {
       </Card>
     </Container>
   );
-}
+});
 
 export default Auth;

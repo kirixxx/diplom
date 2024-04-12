@@ -14,6 +14,7 @@ export default class GameStore {
             {id:4, name: 'Xiaomi'},
             {id:5, name: 'Lenovo'},
             {id:6, name: 'Atlant'},
+            
            
         ]
         this._games = [
@@ -46,6 +47,24 @@ export default class GameStore {
             },
             {
                 "id": 4,
+                "name": "atlant",
+                "price": 100000,
+                "rating": 0,
+                "img": "5a73bdfe-e846-46d3-9f84-286404cd28f9.jpg",
+                "typeId": 1,
+                "brandId": 1
+            },
+            {
+                "id": 5,
+                "name": "pro max 15",
+                "price": 100000,
+                "rating": 0,
+                "img": "0506141d-3422-4eee-9d01-6340572efcb1.jpg",
+                "typeId": 1,
+                "brandId": 3
+            },
+            {
+                "id": 6,
                 "name": "atlant",
                 "price": 100000,
                 "rating": 0,
