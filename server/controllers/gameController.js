@@ -3,6 +3,8 @@ const ApiError = require('../error/ApiError')
 const uuid = require('uuid')
 const path = require('path')
 const { where } = require('sequelize')
+const Sequelize = require("sequelize")
+const Op = Sequelize.Op
 
 class GameController {
     async create(req, res, next) {
@@ -32,23 +34,33 @@ class GameController {
     }
 
     async getAll(req, res) {
-        let {typeId, brandId, limit, page} = req.query
+        let {typeId, brandId, limit, page, name, search} = req.query
         page = page || 1
         limit = limit || 9
         let offset = page * limit - limit
         let games;
-        if (!typeId && !brandId) {
-            games = await Game.findAndCountAll({limit, offset})
+        if (search) {
+            if (!typeId && !brandId && name) {
+                games = await Game.findAndCountAll({where: {name: {[Op.like]:  `%${name}%`}}, limit, offset})
+                console.log(games.rows)
+            }
         }
-        if (typeId && !brandId) {   
-            games = await Game.findAndCountAll({where: {typeId}, limit, offset})
+        else {
+            if (!typeId && !brandId) {
+                games = await Game.findAndCountAll({limit, offset})
+            }
+            if (typeId && !brandId) {   
+                games = await Game.findAndCountAll({where: {typeId}, limit, offset})
+                console.log(games.rows)
+            }
+            if (!typeId && brandId) {
+                games = await Game.findAndCountAll({where: {brandId}, limit, offset})
+            }
+            if (typeId && brandId) {
+                games = await Game.findAndCountAll({where: {typeId, brandId}, limit, offset})
+            }
         }
-        if (!typeId && brandId) {
-            games = await Game.findAndCountAll({where: {brandId}, limit, offset})
-        }
-        if (typeId && brandId) {
-            games = await Game.findAndCountAll({where: {typeId, brandId}, limit, offset})
-        }
+        
         return res.json(games)
     }
 
@@ -63,7 +75,6 @@ class GameController {
         
         return res.json(game)
     }
-
 }
 
 module.exports = new GameController()

@@ -1,29 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Card, Col, Container, Image, Row } from 'react-bootstrap';
 import BigStar from '../assets/BigStar.png';
-
+import {useParams} from 'react-router-dom';
+import { fetchOneGame } from '../http/gameApi';
 const GamePage = () => {
-  const game = {
-    "id": 4,
-    "name": "atlant",
-    "price": 100000,
-    "rating": 0,
-    "img": "5a73bdfe-e846-46d3-9f84-286404cd28f9.jpg",
-    "typeId": 1,
-    "brandId": 1
-  }
-  const description = [
-    {id:1, title: 'Оперативная память', description: '5гб'},
-    {id:2, title: 'Камера', description: '12 мп'},
-    {id:3, title: 'Процессор', description: 'Пентиум 3'},
-    {id:4, title: 'Кол-во ядер', description: '2'},
-    {id:5, title: 'Аккамулятор', description: '4000'},
-  ]
+  const [game, setGame] = useState({info: []})
+  const {id} = useParams()
+  useEffect(() => {
+    fetchOneGame(id).then(data => setGame(data))
+  }, [])
+  console.log(game)
   return (
     <Container className='mt-3'>
       <Row>
         <Col md={4}>
-          <Image width={300} height={300} src={game.img} />
+          <Image width={300} height={300} src={process.env.REACT_APP_API_URL + '/' + game.img} />
         </Col>
         <Col md={4}>
           <Row className='d-flex align-items-center flex-column'>
@@ -49,7 +40,7 @@ const GamePage = () => {
       </Row>
       <Row className='d-flex flex-column m-3'>
         <h1>Характеристики</h1>
-        {description.map((info, index) => 
+        {game.info.map((info, index) => 
           <Row key={info.id} style={{background: index % 2 === 0 ? 'lightgray' : 'transparent', padding: 10}}>
             {info.title}: {info.description}
           </Row>
